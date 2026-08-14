@@ -6,7 +6,7 @@
 <title>CARDINALS BY CODE — Data | Film | Scouting | Scheme</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root{
     --red:#97233F;
@@ -133,7 +133,8 @@
   .chart-legend{display:flex; gap:24px; margin-bottom:20px; font-family:var(--mono); font-size:12px;}
   .chart-legend span{display:flex; align-items:center; gap:7px; color:var(--bone-dim);}
   .dot{width:9px; height:9px; border-radius:50%; display:inline-block;}
-  canvas{height:320px !important;}
+  canvas{display:block;}
+  .chart-canvas-wrap{position:relative; height:320px; width:100%;}
 
   /* ---------- ARTICLE GRID ---------- */
   .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:1px; background:var(--line);}
@@ -239,7 +240,9 @@
         <span><i class="dot" style="background:var(--red)"></i>Points Scored</span>
         <span><i class="dot" style="background:var(--sand)"></i>Points Allowed</span>
       </div>
-      <canvas id="trendChart"></canvas>
+      <div class="chart-canvas-wrap">
+        <canvas id="trendChart"></canvas>
+      </div>
     </div>
   </div>
 </section>
@@ -536,7 +539,10 @@ document.getElementById("legendGrid").innerHTML = SERIES.map(s => `
 
 // Chart
 const ctx = document.getElementById("trendChart");
-new Chart(ctx, {
+if (typeof Chart === "undefined") {
+  ctx.parentElement.innerHTML = '<p style="font-family:var(--mono); font-size:12px; color:var(--bone-dim);">Chart library failed to load — check your internet connection and refresh.</p>';
+} else {
+  new Chart(ctx, {
   type: "line",
   data: {
     labels: TREND_DATA.map(d => d.week),
@@ -575,6 +581,7 @@ new Chart(ctx, {
     }
   }
 });
+}
 
 // Terminal boot line
 const bootLines = [
