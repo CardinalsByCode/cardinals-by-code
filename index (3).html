@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CARDINALS BY CODE — Data | Film | Scouting | Scheme</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+  :root{
+    --red:#97233F;
+    --red-dark:#5E1527;
+    --ink:#141210;
+    --ink-soft:#1E1B18;
+    --bone:#EDE6DB;
+    --bone-dim:#B9B0A1;
+    --sand:#C9A227;
+    --slate:#4A4640;
+    --moss:#6B8F71;
+    --line: rgba(237,230,219,0.14);
+    --display: 'Oswald', sans-serif;
+    --body: 'Source Serif 4', serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--bone);
+    font-family:var(--body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit; text-decoration:none;}
+  img,canvas{max-width:100%;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+  ::selection{background:var(--sand); color:var(--ink);}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(20,18,16,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-row{
+    display:flex; align-items:center; justify-content:space-between;
+    height:64px; gap:24px;
+  }
+  .wordmark{
+    font-family:var(--display); font-weight:700; letter-spacing:0.5px;
+    font-size:18px; text-transform:uppercase; white-space:nowrap;
+  }
+  .wordmark .x{color:var(--sand); font-family:var(--mono); font-weight:400; margin:0 6px; font-size:15px;}
+  nav{display:flex; gap:2px; flex-wrap:wrap;}
+  nav button{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:0.5px;
+    text-transform:uppercase; background:none; border:none; color:var(--bone-dim);
+    padding:8px 12px; cursor:pointer; border-radius:3px; transition:color .15s, background .15s;
+  }
+  nav button:hover{color:var(--bone); background:rgba(237,230,219,0.06);}
+  nav button.active{color:var(--sand); background:rgba(201,162,39,0.1);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:88px 0 64px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      linear-gradient(180deg, transparent 0%, var(--ink) 100%),
+      repeating-linear-gradient(180deg, rgba(151,35,63,0.05) 0px, rgba(151,35,63,0.05) 1px, transparent 1px, transparent 48px);
+    pointer-events:none;
+  }
+  .terminal{
+    font-family:var(--mono); font-size:12.5px; color:var(--moss);
+    margin-bottom:28px; min-height:20px; position:relative; z-index:1;
+  }
+  .terminal::after{content:"█"; animation:blink 1s step-end infinite; margin-left:2px;}
+  @keyframes blink{50%{opacity:0;}}
+  .hero h1{
+    font-family:var(--display); font-weight:700; text-transform:uppercase;
+    font-size:clamp(40px, 8vw, 92px); line-height:0.95; letter-spacing:0.5px;
+    position:relative; z-index:1;
+  }
+  .hero h1 span{color:var(--red);}
+  .tagline{
+    display:flex; flex-wrap:wrap; gap:0; margin-top:30px; font-family:var(--mono);
+    font-size:13px; letter-spacing:1px; text-transform:uppercase; position:relative; z-index:1;
+  }
+  .tagline button{
+    background:none; border:1px solid var(--line); color:var(--bone-dim);
+    padding:9px 18px; cursor:pointer; margin-right:-1px; transition:all .15s;
+  }
+  .tagline button:hover{color:var(--sand); border-color:var(--sand); z-index:1; position:relative;}
+  .hero-sub{
+    margin-top:26px; max-width:520px; color:var(--bone-dim); font-size:16px;
+    position:relative; z-index:1;
+  }
+
+  /* ---------- SECTION LABELS ---------- */
+  .section{padding:64px 0; border-bottom:1px solid var(--line);}
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom:32px; gap:16px; flex-wrap:wrap;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:2px; color:var(--sand);
+    text-transform:uppercase; display:flex; align-items:center; gap:8px;
+  }
+  .eyebrow::before{content:"//"; color:var(--slate);}
+  .section-head h2{
+    font-family:var(--display); font-weight:600; text-transform:uppercase;
+    font-size:clamp(26px, 4vw, 38px); letter-spacing:0.3px; margin-top:6px;
+  }
+  .section-desc{color:var(--bone-dim); font-size:14.5px; max-width:360px; text-align:right;}
+
+  /* ---------- STAT CHART ---------- */
+  .chart-card{
+    background:var(--ink-soft); border:1px solid var(--line); border-radius:4px;
+    padding:32px; position:relative;
+  }
+  .chart-card::before{
+    content:"FIG. 01 — SEASON TREND"; position:absolute; top:-11px; left:24px;
+    background:var(--ink); padding:0 10px; font-family:var(--mono); font-size:10.5px;
+    color:var(--slate); letter-spacing:1px;
+  }
+  .chart-legend{display:flex; gap:24px; margin-bottom:20px; font-family:var(--mono); font-size:12px;}
+  .chart-legend span{display:flex; align-items:center; gap:7px; color:var(--bone-dim);}
+  .dot{width:9px; height:9px; border-radius:50%; display:inline-block;}
+  canvas{height:320px !important;}
+
+  /* ---------- ARTICLE GRID ---------- */
+  .grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(320px,1fr)); gap:1px; background:var(--line);}
+  .card{
+    background:var(--ink); padding:26px; display:flex; flex-direction:column; gap:14px;
+    cursor:pointer; transition:background .15s;
+  }
+  .card:hover{background:var(--ink-soft);}
+  .card:hover .card-title{color:var(--sand);}
+  .code-tag{
+    font-family:var(--mono); font-size:11px; letter-spacing:1px; color:var(--red);
+    border:1px solid var(--red); display:inline-block; padding:3px 8px; width:fit-content;
+    transform:rotate(-1deg);
+  }
+  .card-meta{font-family:var(--mono); font-size:10.5px; color:var(--slate); letter-spacing:0.5px; text-transform:uppercase;}
+  .card-title{
+    font-family:var(--display); font-weight:600; font-size:19px; line-height:1.25;
+    transition:color .15s;
+  }
+  .card-dek{color:var(--bone-dim); font-size:14px; line-height:1.55; flex:1;}
+  .card-foot{font-family:var(--mono); font-size:11px; color:var(--slate); display:flex; justify-content:space-between; margin-top:4px;}
+
+  /* ---------- VIDEO ---------- */
+  .video-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:22px;}
+  .video-card{border:1px solid var(--line); border-radius:4px; overflow:hidden;}
+  .video-frame{aspect-ratio:16/9; background:var(--ink-soft); position:relative;}
+  .video-frame iframe{width:100%; height:100%; border:0; display:block;}
+  .video-card-body{padding:18px;}
+  .video-code{font-family:var(--mono); font-size:10.5px; color:var(--moss); letter-spacing:1px; margin-bottom:6px; display:block;}
+  .video-title{font-family:var(--display); font-weight:500; font-size:16px;}
+
+  /* ---------- SERIES LEGEND / FOOTER ---------- */
+  footer{padding:56px 0 40px;}
+  .legend-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:20px; margin:28px 0 48px;}
+  .legend-item{border-left:2px solid var(--red); padding-left:14px;}
+  .legend-code{font-family:var(--mono); font-size:12px; color:var(--sand); letter-spacing:1px;}
+  .legend-name{font-family:var(--display); font-weight:600; text-transform:uppercase; font-size:14.5px; margin:2px 0 4px;}
+  .legend-desc{font-size:13px; color:var(--bone-dim);}
+  .foot-bottom{
+    border-top:1px solid var(--line); padding-top:24px; display:flex; justify-content:space-between;
+    flex-wrap:wrap; gap:12px; font-family:var(--mono); font-size:11.5px; color:var(--slate); letter-spacing:0.5px;
+  }
+
+  /* ---------- ARTICLE READER OVERLAY ---------- */
+  .reader{
+    position:fixed; inset:0; background:var(--ink); z-index:100; overflow-y:auto;
+    display:none;
+  }
+  .reader.open{display:block;}
+  .reader-inner{max-width:680px; margin:0 auto; padding:100px 28px 100px;}
+  .reader-close{
+    position:fixed; top:20px; right:28px; z-index:101; background:var(--ink-soft);
+    border:1px solid var(--line); color:var(--bone); font-family:var(--mono); font-size:12px;
+    padding:9px 14px; cursor:pointer; border-radius:3px;
+  }
+  .reader-close:hover{border-color:var(--sand); color:var(--sand);}
+  .reader h1{font-family:var(--display); font-weight:700; font-size:clamp(28px,5vw,42px); line-height:1.15; margin:18px 0 10px; text-transform:uppercase;}
+  .reader-meta{font-family:var(--mono); font-size:12px; color:var(--slate); margin-bottom:36px;}
+  .reader-body p{margin-bottom:20px; font-size:17px; color:#DCD5C7;}
+
+  @media(max-width:720px){
+    .nav-row{flex-wrap:wrap; height:auto; padding:12px 0;}
+    nav{gap:0;}
+    .section-head{flex-direction:column; align-items:flex-start;}
+    .section-desc{text-align:left;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav-row">
+    <div class="wordmark">CARDINALS<span class="x">×</span>BY CODE</div>
+    <nav id="nav"></nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="terminal" id="terminal"></div>
+    <h1>CARDINALS<br><span>BY CODE</span></h1>
+    <p class="hero-sub">Independent statistical analysis, film breakdowns, and scouting on the Arizona Cardinals — built from raw tape and raw data, not takes.</p>
+    <div class="tagline">
+      <button onclick="scrollToId('data')">Data</button>
+      <button onclick="scrollToId('articles')">Film</button>
+      <button onclick="scrollToId('articles')">Scouting</button>
+      <button onclick="scrollToId('articles')">Scheme</button>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="data">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">By The Numbers</div>
+        <h2>Season Trend</h2>
+      </div>
+      <div class="section-desc">Points scored vs. points allowed, game by game — 2025 regular season (3–14, Week 8 bye).</div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-legend">
+        <span><i class="dot" style="background:var(--red)"></i>Points Scored</span>
+        <span><i class="dot" style="background:var(--sand)"></i>Points Allowed</span>
+      </div>
+      <canvas id="trendChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="articles">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Latest</div>
+        <h2>The Film Room</h2>
+      </div>
+      <div class="section-desc">Six series. One newsroom. Click any card to read.</div>
+    </div>
+  </div>
+  <div class="grid" id="articleGrid"></div>
+</section>
+
+<section class="section" id="video">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Decoded</div>
+        <h2>On Tape</h2>
+      </div>
+      <div class="section-desc">Play-by-play video breakdowns.</div>
+    </div>
+    <div class="video-grid" id="videoGrid"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow">Legend</div>
+        <h2>The Six Series</h2>
+      </div>
+    </div>
+    <div class="legend-grid" id="legendGrid"></div>
+    <div class="foot-bottom">
+      <span>CARDINALS BY CODE — independent fan analysis, unaffiliated with the NFL or Arizona Cardinals</span>
+      <span id="clock"></span>
+    </div>
+  </div>
+</footer>
+
+<div class="reader" id="reader">
+  <button class="reader-close" onclick="closeReader()">✕ CLOSE [ESC]</button>
+  <div class="reader-inner" id="readerContent"></div>
+</div>
+
+<script>
+/* ======================================================================
+   CARDINALS BY CODE — CONTENT DATA
+   ----------------------------------------------------------------------
+   Everything below in this DATA block is what you edit to publish new
+   content. No other part of the file needs to change.
+
+   TO ADD AN ARTICLE: copy an existing object in ARTICLES, paste it as a
+   new entry, and change the fields. `series` must exactly match one of
+   the `key` values in SERIES below (BTN, DEC, TCD, CBR, DFT, RSF).
+   `body` is an array of strings — each string becomes one paragraph.
+
+   TO ADD A VIDEO: copy an entry in VIDEOS. `youtubeId` is the part of a
+   YouTube URL after "v=" (e.g. youtube.com/watch?v=XXXXXXXX -> XXXXXXXX).
+
+   TO UPDATE THE CHART: edit TREND_DATA — one entry per week.
+   ====================================================================== */
+
+const SERIES = [
+  { key:"BTN", name:"By The Numbers", desc:"Advanced statistical analysis." },
+  { key:"DEC", name:"Decoded",        desc:"Film and scheme breakdowns." },
+  { key:"TCD", name:"The Code",       desc:"Weekly Cardinals analysis." },
+  { key:"CBR", name:"Code Breaker",   desc:"Opposing team and player analysis." },
+  { key:"DFT", name:"Draft Code",     desc:"Prospect scouting." },
+  { key:"RSF", name:"Red Sea Files",  desc:"News, roster and transaction analysis." },
+];
+
+const ARTICLES = [
+  {
+    id: "btn-01",
+    series: "BTN",
+    title: "The Cardinals' Red-Zone Efficiency Is Quietly Elite",
+    dek: "Strip away the box score and the trip-to-touchdown rate tells a different story than the win column.",
+    date: "2026-08-04",
+    author: "Staff",
+    readTime: "6 min",
+    body: [
+      "Red-zone conversion rate is one of the noisiest stats in football on a week-to-week basis, but over a large enough sample it separates offenses that finish drives from offenses that merely move the ball.",
+      "Through the sample tracked here, the Cardinals' scoring rate once inside the 20 sits well above league average, driven less by explosive plays and more by down-and-distance discipline on first and second down.",
+      "The follow-up question is whether that efficiency is a function of play design or personnel — and that's the thread the next By The Numbers piece will pull on."
+    ]
+  },
+  {
+    id: "dec-01",
+    series: "DEC",
+    title: "Breaking Down the Cardinals' New RPO Package",
+    dek: "A frame-by-frame look at how the run-pass option game is stressing second-level defenders.",
+    date: "2026-08-06",
+    author: "Staff",
+    readTime: "8 min",
+    body: [
+      "The core concept is simple on paper: put a conflict defender in a run fit and a coverage responsibility at the same time, then let the quarterback's eyes decide the play after the snap.",
+      "What stands out on tape is the run fake selling linebacker eyes downhill a fraction of a second longer than it should, opening a throwing window that isn't there against a disciplined second level.",
+      "Expect opposing coordinators to start rolling a safety down pre-snap to take away the numbers advantage — worth watching for in the next few weeks of film."
+    ]
+  },
+  {
+    id: "tcd-01",
+    series: "TCD",
+    title: "Week 1 Film Notes: What the Tape Actually Showed",
+    dek: "Beyond the final score, five things that stood out on the coaches' film.",
+    date: "2026-08-09",
+    author: "Staff",
+    readTime: "7 min",
+    body: [
+      "The box score tells you what happened. The tape tells you why. Five notes from a full rewatch, in rough order of long-term importance.",
+      "First: the offensive line's protection slides look meaningfully cleaner in obvious passing situations than they did in the preseason.",
+      "Second: the back-seven communication issue that showed up twice was a personnel grouping tell more than a scheme problem — correctable, but worth tracking."
+    ]
+  },
+  {
+    id: "cbr-01",
+    series: "CBR",
+    title: "Scouting the 49ers' Front Seven",
+    dek: "What the Cardinals' protection schemes will need to answer for on Sunday.",
+    date: "2026-08-11",
+    author: "Staff",
+    readTime: "9 min",
+    body: [
+      "San Francisco's front generates pressure differently than most units the Cardinals have faced this season, leaning on stunts and games rather than pure speed off the edge.",
+      "The interior twist package is the piece that matters most for pass protection identification — this is where a hot read has to be automatic, not optional.",
+      "On the ground, the front's gap discipline makes outside zone the tougher rushing lane to find compared to a gap-scheme run."
+    ]
+  },
+  {
+    id: "dft-01",
+    series: "DFT",
+    title: "Three Day-Two Edge Rushers Worth a Trade-Up",
+    dek: "Early scouting notes on the next draft class's pass-rush depth.",
+    date: "2026-08-12",
+    author: "Staff",
+    readTime: "10 min",
+    body: [
+      "It's early in the evaluation cycle, but three Day-Two-graded edge defenders already stand out on early-season tape for bend, hand usage, and processing speed.",
+      "None of the three profile as a finished product as a run defender, which is exactly the kind of tradeoff a scheme built around sub-package pass rush can live with.",
+      "Full scouting reports on each, including the traits that would make or break a trade-up, are coming as the season progresses."
+    ]
+  },
+  {
+    id: "rsf-01",
+    series: "RSF",
+    title: "Roster Cuts: Reading Between the Lines",
+    dek: "What the final roster decisions actually reveal about position-group priorities.",
+    date: "2026-08-13",
+    author: "Staff",
+    readTime: "5 min",
+    body: [
+      "Roster cutdown decisions are as much a statement of scheme priorities as they are a talent ranking, and this year's cuts had a few tells worth flagging.",
+      "The retained depth at one position group over another suggests a specific special-teams plan more than a starting lineup change.",
+      "Worth revisiting once the practice squad shakes out, since that's usually where the clearer signal shows up."
+    ]
+  }
+];
+
+const VIDEOS = [
+  {
+    id: "vid-01",
+    series: "DFT",
+    title: "Draft Code: The Case for Will Johnson",
+    youtubeId: "DkKk9kjcs08"
+  },
+  {
+    id: "vid-02",
+    series: "DFT",
+    title: "Draft Code: Day 3 Offensive Tackles the Cardinals Should Target",
+    youtubeId: "7zjA-UIl_mI"
+  },
+  {
+    id: "vid-03",
+    series: "RSF",
+    title: "Red Sea Files: Cardinals Free Agency Breakdown",
+    youtubeId: "Jh6DAeKmE58"
+  }
+];
+
+const TREND_DATA = [
+  { week:"Wk 1",  scored:20, allowed:13 },
+  { week:"Wk 2",  scored:27, allowed:22 },
+  { week:"Wk 3",  scored:15, allowed:16 },
+  { week:"Wk 4",  scored:20, allowed:23 },
+  { week:"Wk 5",  scored:21, allowed:22 },
+  { week:"Wk 6",  scored:27, allowed:31 },
+  { week:"Wk 7",  scored:23, allowed:27 },
+  { week:"Wk 9",  scored:27, allowed:17 },
+  { week:"Wk 10", scored:22, allowed:44 },
+  { week:"Wk 11", scored:22, allowed:41 },
+  { week:"Wk 12", scored:24, allowed:27 },
+  { week:"Wk 13", scored:17, allowed:20 },
+  { week:"Wk 14", scored:17, allowed:45 },
+  { week:"Wk 15", scored:20, allowed:40 },
+  { week:"Wk 16", scored:19, allowed:26 },
+  { week:"Wk 17", scored:14, allowed:37 },
+  { week:"Wk 18", scored:20, allowed:37 },
+];
+
+/* ======================================================================
+   RENDER LOGIC — no need to edit below this line.
+   ====================================================================== */
+
+const seriesByKey = Object.fromEntries(SERIES.map(s => [s.key, s]));
+
+// Nav
+const navEl = document.getElementById("nav");
+navEl.innerHTML = `<button class="active" data-filter="ALL">All</button>` +
+  SERIES.map(s => `<button data-filter="${s.key}">${s.name}</button>`).join("");
+navEl.addEventListener("click", e => {
+  if (e.target.tagName !== "BUTTON") return;
+  [...navEl.children].forEach(b => b.classList.remove("active"));
+  e.target.classList.add("active");
+  renderArticles(e.target.dataset.filter);
+  document.getElementById("articles").scrollIntoView({behavior:"smooth"});
+});
+
+function scrollToId(id){ document.getElementById(id).scrollIntoView({behavior:"smooth"}); }
+
+// Articles
+function renderArticles(filter="ALL"){
+  const grid = document.getElementById("articleGrid");
+  const list = ARTICLES
+    .filter(a => filter === "ALL" || a.series === filter)
+    .sort((a,b) => new Date(b.date) - new Date(a.date));
+  grid.innerHTML = list.map(a => {
+    const s = seriesByKey[a.series];
+    return `
+      <div class="card" onclick="openReader('${a.id}')">
+        <span class="code-tag">${a.id.toUpperCase()}</span>
+        <div class="card-meta">${s.name}</div>
+        <div class="card-title">${a.title}</div>
+        <div class="card-dek">${a.dek}</div>
+        <div class="card-foot"><span>${formatDate(a.date)}</span><span>${a.readTime}</span></div>
+      </div>`;
+  }).join("");
+}
+
+function formatDate(d){
+  return new Date(d + "T00:00:00").toLocaleDateString("en-US", {month:"short", day:"numeric", year:"numeric"});
+}
+
+// Reader overlay
+function openReader(id){
+  const a = ARTICLES.find(x => x.id === id);
+  if(!a) return;
+  const s = seriesByKey[a.series];
+  document.getElementById("readerContent").innerHTML = `
+    <span class="code-tag">${a.id.toUpperCase()}</span>
+    <h1>${a.title}</h1>
+    <div class="reader-meta">${s.name} — ${formatDate(a.date)} — ${a.author} — ${a.readTime}</div>
+    <div class="reader-body">${a.body.map(p => `<p>${p}</p>`).join("")}</div>
+  `;
+  document.getElementById("reader").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeReader(){
+  document.getElementById("reader").classList.remove("open");
+  document.body.style.overflow = "";
+}
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeReader(); });
+
+// Videos
+const videoGrid = document.getElementById("videoGrid");
+videoGrid.innerHTML = VIDEOS.map(v => {
+  const s = seriesByKey[v.series];
+  return `
+    <div class="video-card">
+      <div class="video-frame">
+        <iframe src="https://www.youtube.com/embed/${v.youtubeId}" title="${v.title}" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="video-card-body">
+        <span class="video-code">${s.key} — ${s.name.toUpperCase()}</span>
+        <div class="video-title">${v.title}</div>
+      </div>
+    </div>`;
+}).join("");
+
+// Legend
+document.getElementById("legendGrid").innerHTML = SERIES.map(s => `
+  <div class="legend-item">
+    <div class="legend-code">${s.key}</div>
+    <div class="legend-name">${s.name}</div>
+    <div class="legend-desc">${s.desc}</div>
+  </div>
+`).join("");
+
+// Chart
+const ctx = document.getElementById("trendChart");
+new Chart(ctx, {
+  type: "line",
+  data: {
+    labels: TREND_DATA.map(d => d.week),
+    datasets: [
+      {
+        label: "Points Scored",
+        data: TREND_DATA.map(d => d.scored),
+        borderColor: "#97233F",
+        backgroundColor: "rgba(151,35,63,0.08)",
+        tension: 0.35,
+        pointRadius: 3,
+        pointBackgroundColor: "#97233F",
+        borderWidth: 2.5,
+        fill: true,
+      },
+      {
+        label: "Points Allowed",
+        data: TREND_DATA.map(d => d.allowed),
+        borderColor: "#C9A227",
+        backgroundColor: "rgba(201,162,39,0.06)",
+        tension: 0.35,
+        pointRadius: 3,
+        pointBackgroundColor: "#C9A227",
+        borderWidth: 2.5,
+        fill: true,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: "rgba(237,230,219,0.06)" }, ticks: { color: "#B9B0A1", font: { family: "JetBrains Mono", size: 11 } } },
+      y: { grid: { color: "rgba(237,230,219,0.06)" }, ticks: { color: "#B9B0A1", font: { family: "JetBrains Mono", size: 11 } } }
+    }
+  }
+});
+
+// Terminal boot line
+const bootLines = [
+  "$ initializing cardinals_by_code.sys",
+  "$ loading modules: data / film / scouting / scheme",
+  "$ ready."
+];
+const terminalEl = document.getElementById("terminal");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (reduceMotion) {
+  terminalEl.textContent = bootLines[bootLines.length - 1];
+} else {
+  let li = 0, ci = 0;
+  function typeBoot(){
+    if (li >= bootLines.length) return;
+    const line = bootLines[li];
+    if (ci <= line.length){
+      terminalEl.textContent = line.slice(0, ci);
+      ci++;
+      setTimeout(typeBoot, 18);
+    } else {
+      li++; ci = 0;
+      setTimeout(typeBoot, 380);
+    }
+  }
+  typeBoot();
+}
+
+// Clock (build timestamp, static)
+document.getElementById("clock").textContent = "BUILD " + new Date().toISOString().slice(0,10).replace(/-/g,".");
+
+// Init
+renderArticles("ALL");
+</script>
+</body>
+</html>
