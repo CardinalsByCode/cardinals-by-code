@@ -204,6 +204,7 @@
   .dtable td:first-child, .dtable th:first-child{text-align:left; color:var(--bone-dim);}
   .dtable tr:nth-child(even) td{background:rgba(237,230,219,0.03);}
   .data-credit{font-family:var(--mono); font-size:11px; color:var(--slate); margin:-10px 0 24px;}
+  .article-img{width:100%; border-radius:3px; border:1px solid var(--line); margin-bottom:24px; display:block;}
 
   @media(max-width:720px){
     .nav-row{flex-wrap:wrap; height:auto; padding:12px 0;}
@@ -466,15 +467,31 @@ const ARTICLES = [
   {
     id: "tcd-01",
     series: "TCD",
-    title: "Week 1 Film Notes: What the Tape Actually Showed",
-    dek: "Beyond the final score, five things that stood out on the coaches' film.",
-    date: "2026-08-09",
-    author: "Staff",
-    readTime: "7 min",
+    title: "Drive Summary: Cardinals Fall Late to the Panthers in the Hall of Fame Game",
+    dek: "Three touchdown drives, three field goal drives, and a costly turnover on downs — Arizona's opener ended in a 33–30 loss to Carolina.",
+    date: "2026-08-06",
+    author: "AzJace",
+    readTime: "2 min",
     body: [
-      "The box score tells you what happened. The tape tells you why. Five notes from a full rewatch, in rough order of long-term importance.",
-      "First: the offensive line's protection slides look meaningfully cleaner in obvious passing situations than they did in the preseason.",
-      "Second: the back-seven communication issue that showed up twice was a personnel grouping tell more than a scheme problem — correctable, but worth tracking."
+      "Arizona Cardinals drive summary for the Hall of Fame Game vs. the Carolina Panthers — 2026 Pro Football Hall of Fame Game, Aug 6, 2026, Canton, OH. Final: Panthers 33, Cardinals 30.",
+      "<img class='article-img' src='cardinals_drive_chart.png' alt='Arizona Cardinals drive summary chart vs Carolina Panthers, Hall of Fame Game 2026'>",
+      "3× Touchdown drives, 3× Field Goal drives, 1× Punt, 1× Kneel down, 1× Turnover on downs.",
+      "<p class='data-credit'>By @azjace</p>"
+    ]
+  },
+  {
+    id: "tcd-02",
+    series: "TCD",
+    title: "Drive Summary: Cardinals Take Down the Raiders in Preseason Week 1",
+    dek: "Three touchdown drives and a much cleaner finish — Arizona bounces back with a 27–14 win over Las Vegas.",
+    date: "2026-08-13",
+    author: "AzJace",
+    readTime: "2 min",
+    body: [
+      "Arizona Cardinals drive summary for the Week 1 Preseason game vs. the Las Vegas Raiders — Aug 13, 2026, Allegiant Stadium, Las Vegas, NV. Final: Cardinals 27, Raiders 14.",
+      "<img class='article-img' src='cardinals_vs_raiders_drive_chart.png' alt='Arizona Cardinals drive summary chart vs Las Vegas Raiders, Preseason Week 1 2026'>",
+      "3× Touchdown drives, 2× Field Goal drives, 2× Punts, 1× Missed Field Goal drive, 1× Kneel down.",
+      "<p class='data-credit'>By @azjace</p>"
     ]
   },
   {
